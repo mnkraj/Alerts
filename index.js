@@ -1,5 +1,5 @@
 const express = require("express");
-const twilio = require('twilio');
+const mailSender = require("./mailsender")
 const dotenv = require("dotenv");
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -12,10 +12,9 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
 
 const noticesUrl = process.env.n_url;
-let latestNoticeId = 6540;
+let latestNoticeId = 6663;
 
 async function fetchNotices() {
     try {
@@ -45,17 +44,10 @@ async function fetchNotices() {
     }
 }
 
-function sendSmsNotification(notice) {
+async function sendSmsNotification(notice) {
     const messageBody = `New Notice: ${notice.title}\nLink: ${notice.path}`;
-
-    client.messages
-        .create({
-            body: messageBody,
-            from: process.env.TWILIO_PHONE_NUMBER,
-            to: process.env.MY_PHONE_NUMBER
-        })
-        .then(message => console.log('SMS sent:', message.sid))
-        .catch(error => console.error('Error sending SMS:', error));
+    await mailSender(`${notice.title}` , messageBody);
+    
 }
 
 const interval =   process.env.intervel;
