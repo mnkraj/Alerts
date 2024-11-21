@@ -64,7 +64,9 @@ function retryFetchNotices(retries = 3, delay = 5000) {
         });
 }
 
-setInterval(() => retryFetchNotices(3, 5000), interval);
+setInterval(()=>{
+    console.log("hello")
+}, interval);
 
 app.get("/", (req, res) => {
   res.send("kya aapke tooth paste mein namak hai ?");
